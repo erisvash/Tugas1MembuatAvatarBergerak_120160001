@@ -1,0 +1,76 @@
+class Mover {
+ constructor(loc, vel, acc, m){
+ this.location = loc;
+ this.mass = m;
+ this.velocity = vel;
+ this.acceleration = acc;
+ }
+ update(){
+ this.velocity.add(this.acceleration);
+ this.location.add(this.velocity);
+ }
+ display(){
+ noStroke();
+ ellipse(this.location.x, this.location.y, 2*this.mass, 2*this.mass);
+ } 
+  applyForce(force){
+ force.div(this.mass)
+ this.acceleration.add(force);
+ }
+  attractedTo (mover){
+ var force = mover.location.copy().sub(this.location);
+ var distance = force.mag();
+ var strength = 120 * this.mass * mover.mass / (distance**2);
+ force.normalize();
+ force.mult(strength);
+ this.applyForce(force)
+ }
+  }
+
+
+
+ var Cd = 0.05;
+ var diam1 = (2*objek1.mass);
+ var A1 = PI*diam1/2;
+ var frictionForce1 = objek1.velocity.copy();
+ frictionForce1.normalize()
+ frictionForce1.mult(-1* (frictionForce1.mag()**2) *A1*Cd)
+ 
+ var Cd = 0.01;
+ var diam2 = (2*objek2.mass)/2;
+ var A2 = PI*diam2/2;
+ var frictionForce2 = objek2.velocity.copy();
+ frictionForce2.normalize()
+ frictionForce2.mult(-1* (frictionForce2.mag()**2) *A2*Cd)
+
+function setup() {
+ // put setup code here
+ createCanvas(windowWidth, windowHeight);
+ 
+ objekPos1 = createVector(width*1/4,height/2);
+ objekVel1 = createVector(0,0);
+ objekAcc1 = createVector(0,0);
+ objekMass1 = 40;
+ objek1 = new Mover(objekPos1, objekVel1, objekAcc1, objekMass1);
+ objekPos2 = createVector(width*3/4,height/2);
+ objekVel2 = createVector(0,0);
+ objekAcc2 = createVector(0,0);
+ objekMass2 = 20;
+ objek2 = new Mover(objekPos2, objekVel2, objekAcc2, objekMass2);
+}
+function windowResized() {
+ resizeCanvas(windowWidth, windowHeight);
+}
+function draw() {
+ background(127);
+ var gravForce1 = createVector(0, objek1.mass*9.8);
+ var gravForce2 = createVector(0, objek2.mass*9.8);
+ objek1.display();
+ objek1.applyForce(gravForce1);
+ objek1.update();
+ objek2.display();
+ objek2.applyForce(gravForce2);
+ objek2.update();
+ console.log("Kecepatan 1", objek1.velocity.x, objek1.velocity.y, 
+ "Kecepatan 2", objek2.velocity.x, objek2.velocity.y);
+}
